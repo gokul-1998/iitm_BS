@@ -1,17 +1,21 @@
 import click
 from flask import Flask
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from project.auth_utils import add_user
-from project.models import User
-
 db = SQLAlchemy()
+
+from .auth_utils import add_user
+from .models import User
+
 
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///auth.db'
     app.config['SECRET_KEY'] = 'ultra_secret_key'
     db.init_app(app)
+    migrate = Migrate(app, db)
+
     register_cli_commands(app)
     return app
 

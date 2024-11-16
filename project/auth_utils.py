@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import Machine, User
-from . import db
+from project import db
+from project.models import Machine, User
 
 import re
 
