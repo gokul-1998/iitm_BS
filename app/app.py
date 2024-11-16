@@ -3,10 +3,14 @@ from flask import Flask, jsonify
 from . import create_app, db
 from .auth_utils import add_user, validate_auth_header
 from .models import User
+from flask_migrate import Migrate
+
 
 app = create_app()
-with app.app_context():
-    db.create_all()
+# with app.app_context():
+#     db.create_all()
+
+migrate = Migrate(app, db)
 
 @app.route('/check', methods=['GET'])
 def check_auth():
