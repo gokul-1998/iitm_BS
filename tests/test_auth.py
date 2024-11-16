@@ -20,6 +20,12 @@ class AuthTestCase(unittest.TestCase):
             db.session.remove()
             db.drop_all()
 
+    def test_missing_header(self):
+        response = self.client.get('/check')  # No headers provided
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.get_json()['message'], 'Authorization header missing.')
+   
+   
     def test_successful_auth_existing_machine(self):
         with self.app.app_context():
             # Add a machine for the test user
@@ -57,10 +63,6 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.get_json()['message'], 'Invalid header format.')
 
-    def test_missing_header(self):
-        response = self.client.get('/check')  # No headers provided
-        self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.get_json()['message'], 'Authorization header missing.')
 
     def test_invalid_username(self):
         headers = {'SEEK_CUSTOM_AUTH': 'nonexistentuser:password123:UNIQUE_MACHINE_ID'}
