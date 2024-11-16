@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import User
+from .models import Machine, User
 from . import db
 
 def validate_auth_header():
@@ -9,25 +9,38 @@ def validate_auth_header():
     if not auth_header:
         return None, 'Authorization header missing.'
 
+    parts = auth_header.split(':')
+    if len(parts) != 3:
+        return None, 'Invalid header format. Expected format: username:password:machine_id'
+
     try:
-        username, password, machine_id = auth_header.split(':')
+        username, password, machine_id = parts
     except ValueError:
         return None, 'Invalid header format.'
 
-    user = User.query.filter_by(username=username).first()
+    # Check if the machine ID already exists
+    machine = Machine.query.filter_by(machine_id=machine_id).first()
 
-    if not user or not check_password_hash(user.password, password):
-        return None, 'Invalid username or password.'
-
-    if not user.machine_id:
-        user.machine_id = machine_id
-        db.session.commit()
-        return user, 'Machine ID associated.'
-
-    if user.machine_id == machine_id:
-        return user, 'Authentication successful.'
+    if machine:
+        # If the machine exists, verify the user credentials for the associated user
+        user = User.query.get(machine.user_id)
+        if user and check_password_hash(user.password, password):
+            return user, 'Authentication successful.'
+        else:
+            return None, 'Invalid username or password for this machine.'
     else:
-        return None, 'Machine ID mismatch.'
+        # If the machine doesn't exist, verify the user credentials and add the machine
+        user = User.query.filter_by(username=username).first()
+
+        if not user or not check_password_hash(user.password, password):
+            return None, 'Invalid username or password.'
+
+        # Add the new machine to the user's machines
+        new_machine = Machine(machine_id=machine_id, user_id=user.id)
+        db.session.add(new_machine)
+        db.session.commit()
+        return user, 'Machine added and authentication successful.'
+
 
 def add_user(username, password):
     user = User(username=username, password=generate_password_hash(password))
