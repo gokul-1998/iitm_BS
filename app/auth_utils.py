@@ -3,6 +3,25 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .models import Machine, User
 from . import db
 
+import re
+
+def is_valid_machine_id_format(machine_id):
+    """
+    Validate the format and structure of a machine ID.
+
+    Args:
+        machine_id (str): The machine ID to validate.
+
+    Returns:
+        bool: True if the machine ID has a valid format, False otherwise.
+    """
+    # Check if the machine ID is a 64-character hexadecimal string
+    if not isinstance(machine_id, str):
+        return False
+    hex_pattern = re.fullmatch(r"[0-9a-fA-F]{64}", machine_id)
+    return hex_pattern is not None
+
+
 def validate_auth_header():
     print("Validating auth header...", request.headers)
     auth_header = request.headers.get('SEEK_CUSTOM_AUTH')
@@ -18,7 +37,13 @@ def validate_auth_header():
     except ValueError:
         return None, 'Invalid header format.', 400
 
+    # Check if the machine ID has a valid format
+    if not is_valid_machine_id_format(machine_id):
+        return None, 'Invalid machine ID format.', 400
+    
     # Check if the machine ID already exists
+
+
     machine = Machine.query.filter_by(machine_id=machine_id).first()
 
     if machine:
