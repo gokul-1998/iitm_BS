@@ -17,7 +17,17 @@ def create_app():
     migrate = Migrate(app, db)
 
     register_cli_commands(app)
+    register_blueprints(app)
     return app
+
+
+def register_blueprints(app):
+    # Since the application instance is now created, register each Blueprint
+    # with the Flask application instance (app)
+    from project.checks import checks_blueprint
+
+    app.register_blueprint(checks_blueprint)
+    
 
 
 
