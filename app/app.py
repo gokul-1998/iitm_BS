@@ -14,10 +14,10 @@ migrate = Migrate(app, db)
 
 @app.route('/check', methods=['GET'])
 def check_auth():
-    user, message = validate_auth_header()
+    user, message,status_code = validate_auth_header()
     if user:
-        return jsonify({'status': 'OK', 'message': message})
-    return jsonify({'status': 'fail', 'message': message}), 401
+        return jsonify({'status': 'OK', 'message': message}), status_code
+    return jsonify({'status': 'fail', 'message': message}), status_code
 
 @click.command("add-user")
 @click.argument("username")
