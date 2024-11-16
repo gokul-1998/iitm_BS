@@ -16,3 +16,9 @@ Apart from this, the following criteria should also be met:
 A README explaining how to run the code on a system having python3 and pip installed. You are only allowed to ask the tester to do a pip install and run python commands. The tester cannot do apt installs or similar system level installations.
 All the code should be pushed onto a public GitHub repository.
 The commits in the repository should be incremental (do not push all the code in one commit, it will be rejected), so we can gauge how you went about the problem by looking at the commit messages. Have sensible commit messages.
+
+
+## My understanding of the critical points in the question
+
+- a machine ID should be unique to a machine and should not be transferrable between computers
+- but a user can have multiple machine IDs associated with them
