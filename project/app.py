@@ -30,19 +30,7 @@ def add_user_command(username, password):
         print(message)
 
 
-@app.cli.command("update-password")
-@click.argument("username")
-@click.argument("new_password")
-def update_user_password_command(username, new_password):
-    """Update an existing user's password."""
-    with app.app_context():
-        user = User.query.filter_by(username=username).first()
-        if user:
-            user.set_password(new_password)
-            db.session.commit()
-            print(f"Password updated for user '{username}'.")
-        else:
-            print(f"User '{username}' not found.")
+
 
 app.cli.add_command(add_user_command)
 
