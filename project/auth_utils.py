@@ -22,8 +22,8 @@ def is_valid_machine_id_format(machine_id):
     return hex_pattern is not None
 
 
-def validate_auth_header():
-    print("Validating auth header...", request.headers)
+def validate_auth_header(request):
+    print("Validating auth header...", dict(request.headers))  # Convert headers to a dictionary
     auth_header = request.headers.get('SEEK_CUSTOM_AUTH')
     if not auth_header:
         return None, 'Authorization header missing.', 401
@@ -42,8 +42,6 @@ def validate_auth_header():
         return None, 'Invalid machine ID format.', 400
     
     # Check if the machine ID already exists
-
-
     machine = Machine.query.filter_by(machine_id=machine_id).first()
 
     if machine:

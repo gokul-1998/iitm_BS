@@ -9,6 +9,7 @@ def main():
     print("Sending request...", headers)
     response = requests.get("http://localhost:5000/check", headers=headers)
     print(response)
+    print(response.__dict__)
 
 if __name__ == "__main__":
     main()
