@@ -26,4 +26,4 @@ def test_invalid_credentials(test_client, init_database):
     }
     response = test_client.get("/check", headers=headers)
     assert response.status_code == 401
-    assert response.json["message"] == "Invalid username or password."
+    assert response.json["message"] == "Invalid username or password for this machine."
