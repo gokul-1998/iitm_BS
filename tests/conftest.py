@@ -4,6 +4,8 @@ import pytest
 
 from project import create_app, db
 from project.models import  User, Machine
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 
 # --------
@@ -65,3 +67,48 @@ def cli_test_client():
     runner = flask_app.test_cli_runner()
 
     yield runner  # this is where the testing happens!
+
+
+@pytest.fixture
+def app():
+    app = create_app()
+
+    with app.app_context():
+        db.create_all()
+        yield app
+        db.session.remove()
+        db.drop_all()
+
+@pytest.fixture
+def client(app):
+    return app.test_client()
+
+@pytest.fixture
+def runner(app):
+    return app.test_cli_runner()
+
+@pytest.fixture
+def init_data():
+    def add_user_and_machine(username, password, machine_id=None):
+        user = User(username=username, password=generate_password_hash(password))
+        db.session.add(user)
+        db.session.commit()
+        if machine_id:
+            machine = Machine(machine_id=machine_id, user_id=user.id)
+            db.session.add(machine)
+            db.session.commit()
+        return user
+
+    return add_user_and_machine
+
+@pytest.fixture
+def app():
+    # Set up the Flask test app
+    test_app = create_app()
+    test_app.config['TESTING'] = True
+    test_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    with test_app.app_context():
+        db.create_all()  # Set up a clean in-memory database
+        yield test_app
+        db.session.remove()
+        db.drop_all()
