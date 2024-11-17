@@ -24,7 +24,7 @@ def is_valid_machine_id_format(machine_id):
 
 def validate_auth_header(request):
     print("Validating auth header...", dict(request.headers))  # Convert headers to a dictionary
-    auth_header = request.headers.get('SEEK_CUSTOM_AUTH')
+    auth_header = request.headers.get('SEEK-CUSTOM-AUTH')
     if not auth_header:
         return None, 'Authorization header missing.', 401
 
