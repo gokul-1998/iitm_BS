@@ -1,5 +1,6 @@
-from project.models import User, Machine
 from project import db
+from project.models import Machine, User
+
 
 def test_user_model(test_client):
     with test_client.application.app_context():
@@ -11,4 +12,3 @@ def test_user_model(test_client):
         assert retrieved_user is not None
         assert retrieved_user.username == "testuser"
         assert retrieved_user.password == "securepassword"
-

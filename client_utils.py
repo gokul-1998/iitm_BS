@@ -1,7 +1,7 @@
-
 import hashlib
-import uuid
 import platform
+import uuid
+
 
 def get_machine_id():
     # Collect machine-specific details
@@ -11,4 +11,3 @@ def get_machine_id():
     # Create a hash to form a unique identifier
     machine_id = hashlib.sha256(unique_data.encode()).hexdigest()
     return machine_id
-

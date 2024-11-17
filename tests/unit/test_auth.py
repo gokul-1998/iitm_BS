@@ -1,6 +1,7 @@
 import pytest
 from flask import Request
 from werkzeug.datastructures import Headers
+
 from project.auth_utils import is_valid_machine_id_format, validate_auth_header
 
 
@@ -31,6 +32,7 @@ def create_mock_request(headers=None):
 def mock_request_with_headers():
     def _create_request(headers):
         return create_mock_request(headers=headers)
+
     return _create_request
 
 
@@ -38,25 +40,28 @@ def test_auth_header_missing(mock_request_with_headers):
     mock_request = mock_request_with_headers(headers={})
     user, message, status = validate_auth_header(mock_request)
     assert user is None
-    assert message == 'Authorization header missing.'
+    assert message == "Authorization header missing."
     assert status == 401
 
 
 def test_invalid_header_format(mock_request_with_headers):
     mock_request = mock_request_with_headers(
-        headers={'SEEK_CUSTOM_AUTH': 'username:password'}
+        headers={"SEEK_CUSTOM_AUTH": "username:password"}
     )
     user, message, status = validate_auth_header(mock_request)
     assert user is None
-    assert message == 'Invalid header format. Expected format: username:password:machine_id'
+    assert (
+        message
+        == "Invalid header format. Expected format: username:password:machine_id"
+    )
     assert status == 400
 
 
 def test_invalid_machine_id_format(mock_request_with_headers):
     mock_request = mock_request_with_headers(
-        headers={'SEEK_CUSTOM_AUTH': 'username:password:invalid_machine_id'}
+        headers={"SEEK_CUSTOM_AUTH": "username:password:invalid_machine_id"}
     )
     user, message, status = validate_auth_header(mock_request)
     assert user is None
-    assert message == 'Invalid machine ID format.'
+    assert message == "Invalid machine ID format."
     assert status == 400

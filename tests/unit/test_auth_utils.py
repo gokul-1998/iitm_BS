@@ -1,8 +1,6 @@
-from project.auth_utils import add_user
-from project.models import User, Machine
 from project import db
-
-
+from project.auth_utils import add_user
+from project.models import Machine, User
 
 
 def test_machine_model(test_client):
