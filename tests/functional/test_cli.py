@@ -35,12 +35,9 @@ def test_update_user_password(cli_test_client):
     """
     username = "testuser"
     new_password = "newsecurepassword"
-    print("1"*20)
     # First, ensure the user exists before updating
     cli_test_client.invoke(args=['add-user', username, "initialpassword"])
-    print("2"*20)
     output = cli_test_client.invoke(args=['update-password', username, new_password])
-    print("3"*20)
     assert output.exit_code == 0
     assert f"Password updated for user '{username}'." in output.output
     

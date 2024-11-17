@@ -11,8 +11,8 @@ class User(db.Model):
     machines = db.relationship('Machine', backref='user', lazy=True, cascade="all, delete-orphan")
 
     def check_password(self, password):
-        return self.password == generate_password_hash(password)
-
+        return check_password_hash(self.password, password)
+    
     def set_password(self, password):
         self.password = generate_password_hash(password)
         

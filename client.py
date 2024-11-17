@@ -4,7 +4,7 @@ def main():
     # username = input("Enter username: ")
     # password = input("Enter password: ")
     username="gokul"
-    password="gokul"
+    password="krish"
     machine_id = get_machine_id()
     auth_header = f"{username}:{password}:{machine_id}"
     headers = {'SEEK-CUSTOM-AUTH': auth_header}
