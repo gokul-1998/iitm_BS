@@ -92,9 +92,11 @@ def cli_test_client():
     os.environ['CONFIG_TYPE'] = 'config.TestingConfig'
     flask_app = create_app()
 
-    runner = flask_app.test_cli_runner()
-
-    yield runner  # this is where the testing happens!
-
+    with flask_app.app_context():
+        db.drop_all()
+        db.create_all()
+    
+    # Return the test CLI runner directly
+        yield flask_app.test_cli_runner()
 
 
