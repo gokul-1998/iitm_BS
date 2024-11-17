@@ -68,4 +68,4 @@ def add_user(username, password):
     user = User(username=username, password=generate_password_hash(password))
     db.session.add(user)
     db.session.commit()
-    return 'User added successfully.'
+    return f"User '{username}' added successfully."

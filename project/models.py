@@ -1,4 +1,6 @@
 from project import db
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 class User(db.Model):
     __tablename__ = 'users'  
@@ -7,6 +9,9 @@ class User(db.Model):
     password = db.Column(db.String(120), nullable=False)
 
     machines = db.relationship('Machine', backref='user', lazy=True, cascade="all, delete-orphan")
+
+    def check_password(self, password):
+        return self.password == generate_password_hash(password)
 
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}')>"

@@ -25,10 +25,13 @@ def test_client():
     flask_app = create_app()
 
     # Create a test client using the Flask application configured for testing
-    with flask_app.test_client() as testing_client:
-        # Establish an application context
-        with flask_app.app_context():
-            yield testing_client  # this is where the testing happens!
+    with flask_app.app_context():
+        db.create_all()
+        with flask_app.test_client() as testing_client:
+            # Establish an application context
+            yield testing_client  # this is where the testing happens!  
+        db.drop_all()
+        
 
 
 @pytest.fixture(scope='module')
@@ -69,46 +72,46 @@ def cli_test_client():
     yield runner  # this is where the testing happens!
 
 
-@pytest.fixture
-def app():
-    app = create_app()
+# @pytest.fixture
+# def app():
+#     app = create_app()
 
-    with app.app_context():
-        db.create_all()
-        yield app
-        db.session.remove()
-        db.drop_all()
+#     with app.app_context():
+#         db.create_all()
+#         yield app
+#         db.session.remove()
+#         db.drop_all()
 
-@pytest.fixture
-def client(app):
-    return app.test_client()
+# @pytest.fixture
+# def client(app):
+#     return app.test_client()
 
-@pytest.fixture
-def runner(app):
-    return app.test_cli_runner()
+# @pytest.fixture
+# def runner(app):
+#     return app.test_cli_runner()
 
-@pytest.fixture
-def init_data():
-    def add_user_and_machine(username, password, machine_id=None):
-        user = User(username=username, password=generate_password_hash(password))
-        db.session.add(user)
-        db.session.commit()
-        if machine_id:
-            machine = Machine(machine_id=machine_id, user_id=user.id)
-            db.session.add(machine)
-            db.session.commit()
-        return user
+# @pytest.fixture
+# def init_data():
+#     def add_user_and_machine(username, password, machine_id=None):
+#         user = User(username=username, password=generate_password_hash(password))
+#         db.session.add(user)
+#         db.session.commit()
+#         if machine_id:
+#             machine = Machine(machine_id=machine_id, user_id=user.id)
+#             db.session.add(machine)
+#             db.session.commit()
+#         return user
 
-    return add_user_and_machine
+#     return add_user_and_machine
 
-@pytest.fixture
-def app():
-    # Set up the Flask test app
-    test_app = create_app()
-    test_app.config['TESTING'] = True
-    test_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-    with test_app.app_context():
-        db.create_all()  # Set up a clean in-memory database
-        yield test_app
-        db.session.remove()
-        db.drop_all()
+# @pytest.fixture
+# def app():
+#     # Set up the Flask test app
+#     test_app = create_app()
+#     test_app.config['TESTING'] = True
+#     test_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+#     with test_app.app_context():
+#         db.create_all()  # Set up a clean in-memory database
+#         yield test_app
+#         db.session.remove()
+#         db.drop_all()
