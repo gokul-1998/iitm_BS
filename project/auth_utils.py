@@ -73,6 +73,9 @@ def add_user(username, password):
         user = User(username=username, password=generate_password_hash(password))
         db.session.add(user)
         db.session.commit()
+        db.session.refresh(user)
     except Exception as e:
-        return f"Error: {str(e)}"
-    return f"User '{username}' added successfully."
+        print(f"Error: {str(e)}")
+        return None  # Return None on error
+    return user
+
