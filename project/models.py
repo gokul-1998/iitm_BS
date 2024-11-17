@@ -13,6 +13,10 @@ class User(db.Model):
     def check_password(self, password):
         return self.password == generate_password_hash(password)
 
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+        
+
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}')>"
 

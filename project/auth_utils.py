@@ -65,7 +65,14 @@ def validate_auth_header(request):
         return user, 'Machine added and authentication successful.', 201
 
 def add_user(username, password):
-    user = User(username=username, password=generate_password_hash(password))
-    db.session.add(user)
-    db.session.commit()
+    try:
+        user = User.query.filter_by(username=username).first()
+        if user:
+            return f"Error: User '{username}' already exists."
+        
+        user = User(username=username, password=generate_password_hash(password))
+        db.session.add(user)
+        db.session.commit()
+    except Exception as e:
+        return f"Error: {str(e)}"
     return f"User '{username}' added successfully."
