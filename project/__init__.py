@@ -1,6 +1,7 @@
 import click
 from flask import Flask
 from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade
 from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy as sa
 import logging
@@ -16,30 +17,34 @@ from .models import User
 import os
 
 
+migrate = Migrate()
+
 def create_app():
     app = Flask(__name__)
     config_type = os.getenv('CONFIG_TYPE', default='config.DevelopmentConfig')
     app.config.from_object(config_type)
 
+    # Initialize database and migration
     db.init_app(app)
-    migrate = Migrate(app, db)
+    migrate.init_app(app, db)
 
     register_cli_commands(app)
     register_blueprints(app)
     configure_logging(app)
 
-    # Check if the database needs to be initialized
-    engine = sa.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    inspector = sa.inspect(engine)
-    if not inspector.has_table("users"):
-        with app.app_context():
-            db.drop_all()
-            db.create_all()
-            app.logger.info('Initialized the database!')
-    else:
-        app.logger.info('Database already contains the users table.')
+    # Apply migrations instead of db.create_all()
+    with app.app_context():
+        engine = sa.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        inspector = sa.inspect(engine)
+        if not inspector.has_table("users"):
+            app.logger.info('Applying database migrations...')
+            upgrade()  # Apply migrations
+            app.logger.info('Database migrations applied successfully!')
+        else:
+            app.logger.info('Database already contains the users table.')
 
     return app
+
 
 
 def register_blueprints(app):
