@@ -6,10 +6,6 @@ os.environ["CONFIG_TYPE"] = "config.TestingConfig"
 flask_app = create_app()
 
 
-def test_hello(test_client):
-    response = test_client.get("/")
-    assert response.status_code == 200
-    assert response.get_json() == {"message": "Hello, World!"}
 
 
 def test_auth_without_existing_machine(test_client, init_users):

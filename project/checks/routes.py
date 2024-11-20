@@ -17,7 +17,3 @@ def check_auth():
         return jsonify({"status": "OK", "message": message}), status_code
     return jsonify({"status": "fail", "message": message}), status_code
 
-
-@checks_blueprint.get("/")
-def hello():
-    return jsonify({"message": "Hello, World!"}), 200
