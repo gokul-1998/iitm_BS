@@ -1,0 +1,5 @@
+*.pyc
+*.log*
+instance/flask-user-management.log.1
+env
+venv
